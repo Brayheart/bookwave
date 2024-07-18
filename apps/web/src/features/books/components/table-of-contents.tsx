@@ -6,12 +6,25 @@ import {
   ListItemButton,
   ListItemContent,
   Sheet,
+  Box,
 } from "@mui/joy";
 import Link from "next/link";
 import { dummyData } from "../dummy-data";
 
-export default function TableOfContents() {
-  const book = dummyData.books[0];
+interface TableOfContentsProps {
+  authorHandle: string;
+  bookHandle: string;
+}
+
+export default function TableOfContents({
+  authorHandle,
+  bookHandle,
+}: TableOfContentsProps) {
+  // Find the book based on authorHandle and bookHandle
+  const book = dummyData.books.find(
+    (b) => b.authorHandle === authorHandle && b.bookHandle === bookHandle
+  );
+
   if (!book) {
     return <Typography level="h3">Book not found</Typography>;
   }
@@ -53,7 +66,10 @@ export default function TableOfContents() {
       >
         {book.chapters.map((chapter) => (
           <ListItem key={chapter.id}>
-            <Link href={`/books/${String(chapter.id)}`} passHref>
+            <Link
+              href={`/books/${authorHandle}/${bookHandle}/${String(chapter.id)}`}
+              passHref
+            >
               <ListItemButton>
                 <ListItemContent>{chapter.title}</ListItemContent>
               </ListItemButton>
@@ -61,6 +77,30 @@ export default function TableOfContents() {
           </ListItem>
         ))}
       </List>
+
+      <Box
+        sx={{
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          backgroundColor: "white",
+          padding: "10px 20px",
+          borderTop: "1px solid #ddd",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          margin: "0 auto",
+        }}
+      >
+        <Link href="/books" passHref>
+          <Typography
+            sx={{ textDecoration: "none", cursor: "pointer", fontSize: 25 }}
+          >
+            Home
+          </Typography>
+        </Link>
+      </Box>
     </Sheet>
   );
 }
